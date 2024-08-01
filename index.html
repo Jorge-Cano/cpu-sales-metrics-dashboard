@@ -70,7 +70,7 @@
                  propertyNames: ["completions.opp_rev","keen.timestamp"],
                  latest: "10",
                })
-               .then(function">(results) => {
+               .then((results) => {
                  if (results.result.length > 1) {
                    const chart = new KeenDataviz({
                      container: '#metric',
@@ -89,17 +89,17 @@
                    });
                  }
                })
-               .catch(function">error => console.log(error));
+               .catch(error => console.log(error));
            }
          
-           setInterval( function">() => {
+           setInterval(() => {
                fetchResultsAndRender();
            }, intervalTime);
          
            fetchResultsAndRender();
          }
          
-         window.addEventListener('load', function">() => {
+         window.addEventListener('load', () => {
            showData();
          });
       </script>
