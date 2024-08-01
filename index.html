@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=11" />
+      <title>Public Dashboard</title>
+      <script crossorigin src="https://cdn.jsdelivr.net/npm/keen-analysis@3/dist/keen-analysis.min.js"></script>
+      <script crossorigin src="https://cdn.jsdelivr.net/npm/keen-dataviz@3.14.4/dist/keen-dataviz.min.js"></script>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keen-dataviz@3.14.4/dist/keen-dataviz.min.css">
+      <link rel="stylesheet" type="text/css" href="https://static.keen.io/assets/keen-fonts.css" />
+      <script crossorigin src="https://cdn.jsdelivr.net/npm/@keen.io/dashboard-creator@latest/dist/public-dashboard/runtime.min.js"></script>
+      <script crossorigin src="https://cdn.jsdelivr.net/npm/@keen.io/dashboard-creator@latest/dist/public-dashboard/vendors.min.js"></script>
+      <script crossorigin src="https://cdn.jsdelivr.net/npm/@keen.io/dashboard-creator@latest/dist/public-dashboard/main.min.js"></script>
+      <style>
+         body {
+         margin: 0;
+         padding: 0;
+         }
+      </style>
+   </head>
+   <body>
+      <div id="root"></div>
+      <div id="metric" style="height: 500px;"></div>
+      <div id="modal-root"></div>
+      <script type="text/javascript">
+         new KeenPublicDashboard({
+           container: '#root',
+           modalContainer: '#modal-root',
+           dashboardId: 'e331b7b3-b70c-4469-b2fc-d7cc61d60313',
+           defaultTimezoneForQuery: "Etc/UTC",
+           disableTimezoneSelection: false,
+           widgetsConfiguration: {
+             datePicker: {
+               defaultTimezone: 'Etc/UTC',
+               disableTimezoneSelection: false
+             }
+           },
+           backend: {
+             analyticsApiUrl: 'api.keen.io',
+             dashboardsApiUrl: 'https://dashboard-service.k-n.io',
+           },
+           project: {
+             id: '5ee3ba594969fc23e2344375',
+             accessKey: 'CA6CF886C74597323F60DDB75BDDE4984CDA50F95F95DF446C1C5DEC9546E061',
+             masterKey: 'CA6CF886C74597323F60DDB75BDDE4984CDA50F95F95DF446C1C5DEC9546E061',
+           },
+           translations: {
+             backend: {
+               loadPath: 'https://cdn.jsdelivr.net/npm/@keen.io/dashboard-creator@latest/dist/locales/{{lng}}/{{ns}}.json'
+             }
+           },
+         }).render();
+         
+         
+         
+         function showData() {
+           const intervalTime = 5000; // interval 5000ms
+           const client = new KeenAnalysis({
+             projectId: '5ee3ba594969fc23e2344375',
+             readKey: '7d1a8cd6b307a18cb106a21b12f12d98a2498148d3328f16ea05eab33d215553611f1e155ead80d9f951853b7ca1da6c53a2bc7e9586a0b8e563e88a9fe35fa662a7ce93eaf36107e30aabbcf2ca7da54a08f70295e4cdbe58e2c2deebb7c7a9'
+           });
+         
+           const fetchResultsAndRender = () => {
+             client
+               .query({
+                 analysisType: 'extraction',
+                 eventCollection: 'campaigns_sent',
+                 timeframe: "this_14_days",
+                 timezone: "US/Central",
+                 propertyNames: ["completions.opp_rev","keen.timestamp"],
+                 latest: "10",
+               })
+               .then(function">(results) => {
+                 if (results.result.length > 1) {
+                   const chart = new KeenDataviz({
+                     container: '#metric',
+                     title: 'Computer Purchases',
+                     type: 'metric',
+                     isExtraction: true, // needed for metric chart to recognize this case
+                     comparedProp: 'completions.opp_rev', // defines result
+                     showLoadingSpinner: true,
+                     palette: 'modern',
+                     clearOnRender: true,
+                     transition: {
+                       duration: 0
+                     },
+                     prettyNumber: false,
+                     results,
+                   });
+                 }
+               })
+               .catch(function">error => console.log(error));
+           }
+         
+           setInterval( function">() => {
+               fetchResultsAndRender();
+           }, intervalTime);
+         
+           fetchResultsAndRender();
+         }
+         
+         window.addEventListener('load', function">() => {
+           showData();
+         });
+      </script>
+   </body>
+</html>
